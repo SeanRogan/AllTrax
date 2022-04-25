@@ -15,9 +15,11 @@ public class PropertiesController {
     public String getPropertiesFilePath() {
         return propertiesFilePath;
     }
-
+    {
+        setProperty("client_secret" , "fdd54982e0b042d8b83696f6f3dc7e96");
+        setProperty("client_id", "b18942eaca6d48d0909ce9e208562bc0");
+    }
     public void setProperty(String key, String value) {
-
         try (OutputStream output = new FileOutputStream(getPropertiesFilePath())) {
             Properties prop = new Properties();
             // set the properties value

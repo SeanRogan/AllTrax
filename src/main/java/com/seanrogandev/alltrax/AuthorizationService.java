@@ -5,6 +5,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.URI;
@@ -15,25 +18,20 @@ import java.net.http.HttpResponse;
 // starting a countdown until the the token expires, and refreshing authorization
 
 public class AuthorizationService {
+    //slf4j logger
+    private static final Logger logger = LoggerFactory.getLogger(PropertiesController.class);
+    final private PropertiesController props = new PropertiesController();
     final private String authUrl = "https://accounts.spotify.com/authorize?client_id=b18942eaca6d48d0909ce9e208562bc0&redirect_uri=http://localhost:8080&response_type=code";
-
     final private String clientID = "b18942eaca6d48d0909ce9e208562bc0";
     final private String clientSecret = "fdd54982e0b042d8b83696f6f3dc7e96";
-    private String redirectUri = "http://localhost:8080";
-    private String authorizationResponse;
-    private String serverPath;
     private String authCode = "";
-    private String refreshToken;
+    private String redirectUri = "http://localhost:8080";
     private String accessToken;
+    private String refreshToken;
     public int countdown;
-
+    public String serverPath = "https://accounts.spotify.com";
     public void setAuthCode(String authCode) {
         this.authCode = authCode;
-    }
-
-    public AuthorizationService(String serverPath) {
-        this.serverPath = serverPath;
-
     }
 
     public String getAccess(){
@@ -64,7 +62,7 @@ public class AuthorizationService {
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
-        authorizationResponse = getToken();
+        String authorizationResponse = getToken();
         if(authorizationResponse.contains("access_token")) return authorizationResponse;
         else return null;
     }
@@ -74,6 +72,7 @@ public class AuthorizationService {
         System.out.println("making http request for access_token...\n" +
                 "response:");
         HttpClient client = HttpClient.newBuilder().build();
+
         HttpRequest request = HttpRequest.newBuilder()
                 .header("Accept" , "application/json")
                 .header("Content-Type", "application/x-www-form-urlencoded")
@@ -98,11 +97,14 @@ public class AuthorizationService {
     }
 
     private void processResponse(String responseBody) {
-        JsonObject j = JsonParser.parseString(responseBody).getAsJsonObject();
-        accessToken = j.get("access_token").getAsString();
-        refreshToken = j.get("refresh_token").getAsString();
-        countdown = j.get("expires_in").getAsInt();
+
+            JsonObject j = JsonParser.parseString(responseBody).getAsJsonObject();
+            accessToken = j.get("access_token").getAsString();
+            refreshToken = j.get("refresh_token").getAsString();
+            countdown = j.get("expires_in").getAsInt();
+
     }
+
     private void refreshAccess() {
 
     }
