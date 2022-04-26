@@ -3,7 +3,23 @@ package com.seanrogandev.alltrax;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class InputController {
-    private static final Logger logger = LoggerFactory.getLogger(PropertiesController.class);
+import java.util.Scanner;
 
+public class InputController {
+    private final Logger logger = LoggerFactory.getLogger(PropertiesController.class);
+    final private Scanner in = new Scanner(System.in);
+
+    public String takeInput() {
+        String input = in.nextLine();
+        if(validateInput(input)) {
+            return input;
+        }
+        return null;
+    }
+
+    private boolean validateInput(String input) {
+        //todo figure out what illegal search terms would be,
+        // filter them, return true if not one of them
+        return false;
+    }
 }

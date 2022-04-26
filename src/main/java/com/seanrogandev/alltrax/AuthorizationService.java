@@ -19,8 +19,8 @@ import java.net.http.HttpResponse;
 
 public class AuthorizationService {
     //slf4j logger
+    private PropertiesController propController;
     private static final Logger logger = LoggerFactory.getLogger(PropertiesController.class);
-    final private PropertiesController props = new PropertiesController();
     final private String authUrl = "https://accounts.spotify.com/authorize?client_id=b18942eaca6d48d0909ce9e208562bc0&redirect_uri=http://localhost:8080&response_type=code";
     final private String clientID = "b18942eaca6d48d0909ce9e208562bc0";
     final private String clientSecret = "fdd54982e0b042d8b83696f6f3dc7e96";
@@ -30,6 +30,11 @@ public class AuthorizationService {
     private String refreshToken;
     public int countdown;
     public String serverPath = "https://accounts.spotify.com";
+
+    AuthorizationService(PropertiesController propController) {
+       this.propController = propController;
+    }
+
     public void setAuthCode(String authCode) {
         this.authCode = authCode;
     }

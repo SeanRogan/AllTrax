@@ -9,19 +9,19 @@ import java.io.*;
 import java.util.Properties;
 
 public class PropertiesController {
-
+    private final Properties prop;
     private final String propertiesFilePath = "src/main/resources/config.properties";
     private static final Logger logger = LoggerFactory.getLogger(PropertiesController.class);
+    PropertiesController(Properties prop) {
+        this.prop = prop;
+    }
     public String getPropertiesFilePath() {
         return propertiesFilePath;
     }
-    {
-        setProperty("client_secret" , "fdd54982e0b042d8b83696f6f3dc7e96");
-        setProperty("client_id", "b18942eaca6d48d0909ce9e208562bc0");
-    }
+
     public void setProperty(String key, String value) {
         try (OutputStream output = new FileOutputStream(getPropertiesFilePath())) {
-            Properties prop = new Properties();
+
             // set the properties value
             prop.setProperty(key, value);
             // save properties to project root folder
@@ -43,7 +43,7 @@ public class PropertiesController {
                 return prop.get(key).toString();
             }
         } catch (IOException e) {
-            logger.warn("An IOException occurred..");
+            logger.warn("An IOException occurred while attempting to load config.properties");
             e.printStackTrace();
         }
         return null;
