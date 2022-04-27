@@ -10,8 +10,10 @@ public class InputController {
     final private Scanner in = new Scanner(System.in);
 
     public String takeInput() {
+        logger.info("Receiving input from console..");
         String input = in.nextLine();
-        if(validateInput(input)) {
+        if(!validateInput(input)) {
+            logger.info("input returned is: " + input);
             return input;
         }
         return null;

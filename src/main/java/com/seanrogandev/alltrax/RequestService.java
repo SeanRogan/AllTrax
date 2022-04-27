@@ -1,8 +1,6 @@
 package com.seanrogandev.alltrax;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class RequestService {
+    public Gson gson = new Gson();
     private static final Logger logger = LoggerFactory.getLogger(PropertiesController.class);
     private final String serverPath = "https://api.spotify.com";
     private String accessToken;
@@ -27,12 +26,11 @@ public class RequestService {
         accessToken = parseAccessToken(authRequestBody);
     }
 
-    public List<Album> findArtist(String searchTerm) {
-        List<Album> discography = null;
+    public Artist findArtist(String searchTerm) {
         String encodedSearchTerm = urlEncode(searchTerm);
         HttpClient client = HttpClient.newBuilder().build();
-        String endPoint = "/v1/search?";
-        String query = "q=" + encodedSearchTerm + "&type=artist";
+        String endPoint = "/v1/search";
+        String query = String.format("?q=%s&type=artist&limit=50", encodedSearchTerm);
         //todo find a more appropriate way to deal with null if its even possible to encounter.
         HttpRequest request = HttpRequest.newBuilder()
                 .header("Authorization" , "Bearer " + accessToken)
@@ -40,40 +38,37 @@ public class RequestService {
                 .GET()
                 .build();
         String responseBody = "";
-        //System.out.println("Query attempted: " + serverPath + endPoint + query);
+        //todo remove in final version
+        System.out.println("Query attempted: " + serverPath + endPoint + query);
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             responseBody = response.body();
-            System.out.println(responseBody);
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
         if(checkForErrorCode(responseBody)) {
             return null;
         }
-        //todo parse json
         JsonObject jsonResponse = JsonParser.parseString(responseBody).getAsJsonObject();
         JsonObject artists = jsonResponse.getAsJsonObject("artists");
-        System.out.println(artists.toString());
+        JsonArray items = artists.getAsJsonArray("items");
+        for(JsonElement item : items) {
+            JsonObject thisItem = item.getAsJsonObject();
+            if(thisItem.get("name").getAsString().equalsIgnoreCase(searchTerm)) {
+                return new Artist(thisItem.get("id").getAsString(),
+                        thisItem.get("name").getAsString(),
+                        thisItem.get("href").getAsString());
+            }
 
-
-
-
-        if(discography != null) {
-            return discography;
         }
-        else {
-            return null;
-        }
-    }
-
-    private String urlEncode(String term) {
-        try {
-            return URLEncoder.encode(term, StandardCharsets.UTF_8.toString());
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-    return null;
+        //TODO ok so the response is split into items,
+        // but we need a way to make sure to collect
+        // all possible responses before choosing one.
+        // need to isolate the prev and next
+        // elements of the json response,
+        // and make a way to go through each page
+        // and save the results.
+        return null;
     }
 
     private void parseArtistQueryResponse(JsonObject responseBody) {
@@ -81,8 +76,8 @@ public class RequestService {
     }
 
     public void getDiscography(List<Album> albums) {}
-    public void getAllTracks(List<Track> tracks) {}
 
+    public void getAllTracks(List<Track> tracks) {}
     public List<Album> getNewAlbums() {
 
         String responseBody = "";
@@ -206,6 +201,15 @@ public class RequestService {
             return false;
         }
         return false;
+    }
+
+    private String urlEncode(String term) {
+        try {
+            return URLEncoder.encode(term, StandardCharsets.UTF_8.toString());
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private String parseAccessToken(String authRequestBody) {

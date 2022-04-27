@@ -8,5 +8,5 @@ public class Artist {
     private String href;
     private String link;
     private List<Album> discography;
-
+    Artist(String id, String name, String href) {}
 }
