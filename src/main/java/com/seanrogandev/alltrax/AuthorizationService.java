@@ -19,20 +19,16 @@ import java.net.http.HttpResponse;
 
 public class AuthorizationService {
     //slf4j logger
-    private PropertiesController propController;
     private static final Logger logger = LoggerFactory.getLogger(PropertiesController.class);
-    final private String authUrl = "https://accounts.spotify.com/authorize?client_id=b18942eaca6d48d0909ce9e208562bc0&redirect_uri=http://localhost:8080&response_type=code";
-    final private String clientID = "b18942eaca6d48d0909ce9e208562bc0";
-    final private String clientSecret = "fdd54982e0b042d8b83696f6f3dc7e96";
-    private String authCode = "";
+    private final PropertiesController propertiesController;
+    private String authUrl = "https://accounts.spotify.com/authorize?client_id=b18942eaca6d48d0909ce9e208562bc0&redirect_uri=http://localhost:8080&response_type=code";
     private String redirectUri = "http://localhost:8080";
-    private String accessToken;
-    private String refreshToken;
-    public int countdown;
     public String serverPath = "https://accounts.spotify.com";
+    private String authCode = "";
+    public int countdown;
 
-    AuthorizationService(PropertiesController propController) {
-       this.propController = propController;
+    AuthorizationService(PropertiesController propertiesController) {
+       this.propertiesController = propertiesController;
     }
 
     public void setAuthCode(String authCode) {
@@ -40,6 +36,7 @@ public class AuthorizationService {
     }
 
     public String getAccess(){
+
         System.out.println(authUrl);
         try {
             HttpServer server = HttpServer.create();
@@ -67,12 +64,12 @@ public class AuthorizationService {
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
-        String authorizationResponse = getToken();
+        String authorizationResponse = getToken(authCode);
         if(authorizationResponse.contains("access_token")) return authorizationResponse;
         else return null;
     }
 
-    private String getToken() {
+    private String getToken(String authCode) {
         String responseBody = "";
         System.out.println("making http request for access_token...\n" +
                 "response:");
@@ -85,8 +82,8 @@ public class AuthorizationService {
                 .POST(HttpRequest.BodyPublishers.ofString(
                         "grant_type=authorization_code"
                                 + "&code=" + authCode
-                                + "&client_id=" + clientID
-                                + "&client_secret=" + clientSecret
+                                + "&client_id=" + propertiesController.loadProperties("client_id")
+                                + "&client_secret=" + propertiesController.loadProperties("client_secret")
                                 + "&redirect_uri=" + redirectUri))
                 .build();
         try {
@@ -104,8 +101,8 @@ public class AuthorizationService {
     private void processResponse(String responseBody) {
 
             JsonObject j = JsonParser.parseString(responseBody).getAsJsonObject();
-            accessToken = j.get("access_token").getAsString();
-            refreshToken = j.get("refresh_token").getAsString();
+            propertiesController.setProperty("access_token", j.get("access_token").getAsString());
+            propertiesController.setProperty("refresh_token", j.get("refresh_token").getAsString());
             countdown = j.get("expires_in").getAsInt();
 
     }
