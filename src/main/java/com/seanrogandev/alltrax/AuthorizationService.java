@@ -19,7 +19,7 @@ import java.net.http.HttpResponse;
 
 public class AuthorizationService {
     //slf4j logger
-    private static final Logger logger = LoggerFactory.getLogger(PropertiesController.class);
+    private static final Logger logger = LoggerFactory.getLogger(AuthorizationService.class);
     private final PropertiesController propertiesController;
     private String authUrl = "https://accounts.spotify.com/authorize?client_id=b18942eaca6d48d0909ce9e208562bc0&redirect_uri=http://localhost:8080&response_type=code";
     private String redirectUri = "http://localhost:8080";
