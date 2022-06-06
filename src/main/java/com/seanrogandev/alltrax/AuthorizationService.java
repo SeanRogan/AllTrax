@@ -20,14 +20,14 @@ import java.net.http.HttpResponse;
 public class AuthorizationService {
     //slf4j logger
     private static final Logger logger = LoggerFactory.getLogger(AuthorizationService.class);
-    private final PropertiesController propertiesController;
+    private final PropertiesManager propertiesController;
     private String authUrl = "https://accounts.spotify.com/authorize?client_id=b18942eaca6d48d0909ce9e208562bc0&redirect_uri=http://localhost:8080&response_type=code";
     private String redirectUri = "http://localhost:8080";
     public String serverPath = "https://accounts.spotify.com";
     private String authCode = "";
     public int countdown;
 
-    AuthorizationService(PropertiesController propertiesController) {
+    AuthorizationService(PropertiesManager propertiesController) {
        this.propertiesController = propertiesController;
     }
 
@@ -40,22 +40,30 @@ public class AuthorizationService {
         System.out.println(authUrl);
         try {
             HttpServer server = HttpServer.create();
+            //this should be a logging statment \/
+            //binding server to socket
             server.bind(new InetSocketAddress(8080), 0);
             server.createContext("/", (HttpExchange exchange) -> {
                 String query = exchange.getRequestURI().getQuery();
                 String request;
                 if(query != null && query.contains("code")) {
                     setAuthCode(query.substring(5));
+                    //this should be a logging statment \/
                     System.out.println("Access code received");
+                    //this should be a logging statment \/
                     request = "Got the code. Return back to your program.";
                 } else {
+                    //this should be a logging statment \/
                     request = "Authorization code not found. Try again.";
                 }
                 exchange.sendResponseHeaders(200, request.length());
                 exchange.getResponseBody().write(request.getBytes());
                 exchange.getResponseBody().close();
             });
+            //this should be a logging statment \/
             server.start();
+            //this should be a logging statment \/
+
             System.out.println("Waiting for code...");
             while(authCode.equals("")) {
                 Thread.sleep(100);
@@ -71,6 +79,7 @@ public class AuthorizationService {
 
     private String getToken(String authCode) {
         String responseBody = "";
+        //this should be a logging statment \/
         System.out.println("making http request for access_token...\n" +
                 "response:");
         HttpClient client = HttpClient.newBuilder().build();

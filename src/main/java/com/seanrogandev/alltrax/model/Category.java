@@ -1,11 +1,11 @@
-package com.seanrogandev.alltrax;
+package com.seanrogandev.alltrax.model;
 
 public class Category {
 
     private String name;
     private String categoryId;
     private String href;
-    Category(String name, String id, String href) {
+    public Category(String name, String id, String href) {
         this.name = name;
         this.categoryId = id;
         this.href = href;

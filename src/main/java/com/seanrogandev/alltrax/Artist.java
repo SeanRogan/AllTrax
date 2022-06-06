@@ -1,5 +1,7 @@
 package com.seanrogandev.alltrax;
 
+import com.seanrogandev.alltrax.model.Album;
+
 import java.util.List;
 
 public class Artist {

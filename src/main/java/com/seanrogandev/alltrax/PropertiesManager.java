@@ -1,18 +1,16 @@
 package com.seanrogandev.alltrax;
 
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.Properties;
 
-public class PropertiesController {
+public class PropertiesManager {
     private final Properties prop;
     private final String propertiesFilePath = "src/main/resources/config.properties";
-    private static final Logger logger = LoggerFactory.getLogger(PropertiesController.class);
-    PropertiesController(Properties prop) {
+    private static final Logger logger = LoggerFactory.getLogger(PropertiesManager.class);
+    PropertiesManager(Properties prop) {
         this.prop = prop;
     }
     public String getPropertiesFilePath() {

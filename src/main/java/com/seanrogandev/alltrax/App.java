@@ -1,10 +1,12 @@
 package com.seanrogandev.alltrax;
 
+import com.seanrogandev.alltrax.model.Category;
+
 import java.util.List;
 import java.util.Properties;
 
 public class App {
-    final private static PropertiesController propControl = new PropertiesController(new Properties());
+    final private static PropertiesManager propControl = new PropertiesManager(new Properties());
     final private static AuthorizationService auth = new AuthorizationService(propControl);
     final private static InputController in = new InputController();
     public static void main( String[] args ) {

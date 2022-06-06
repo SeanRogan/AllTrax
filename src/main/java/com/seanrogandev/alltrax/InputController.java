@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Scanner;
 
 public class InputController {
-    private final Logger logger = LoggerFactory.getLogger(PropertiesController.class);
+    private final Logger logger = LoggerFactory.getLogger(PropertiesManager.class);
     final private Scanner in = new Scanner(System.in);
 
     public String takeInput() {

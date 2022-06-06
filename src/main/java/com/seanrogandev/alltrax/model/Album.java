@@ -1,4 +1,4 @@
-package com.seanrogandev.alltrax;
+package com.seanrogandev.alltrax.model;
 
 public class Album {
 

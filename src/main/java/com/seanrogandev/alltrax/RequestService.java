@@ -1,6 +1,9 @@
 package com.seanrogandev.alltrax;
 
 import com.google.gson.*;
+import com.seanrogandev.alltrax.model.Album;
+import com.seanrogandev.alltrax.model.Category;
+import com.seanrogandev.alltrax.model.Track;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +21,7 @@ import java.util.List;
 
 public class RequestService {
     public Gson gson = new Gson();
-    private static final Logger logger = LoggerFactory.getLogger(PropertiesController.class);
+    private static final Logger logger = LoggerFactory.getLogger(PropertiesManager.class);
     private final String serverPath = "https://api.spotify.com";
     private String accessToken;
 
